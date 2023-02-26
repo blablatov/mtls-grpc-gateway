@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: mtls-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mtls-service
+  template:
+    metadata:
+      labels:
+        app: mtls-service
+    spec:
+      containers:
+      - name: mtls-service
+        image: ./mtls-service
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 50051
+          name: grpc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: net-mtls-service
+spec:
+  selector:
+    app: mtls-service
+  ports:
+  - port: 50051
+    targetPort: 50051
+    name: grpc
+  type: NodePort
+
