@@ -6,15 +6,16 @@ import (
 	"crypto/x509"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"path/filepath"
 	"time"
 
-	pb "github.com/blablatov/mtls-grpc-gateway/gw-mtls-proto"
+	gw "github.com/blablatov/mtls-grpc-gateway/gw-mtls-gate"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"golang.org/x/oauth2"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/oauth"
-	"google.golang.org/grpc/encoding/gzip"
 )
 
 var (
@@ -24,7 +25,7 @@ var (
 )
 
 const (
-	address = "localhost:50051"
+	grpcServerEndpoint = "localhost:50051"
 	//address  = "net-tls-service:50051"
 	hostname = "localhost"
 )
@@ -72,37 +73,25 @@ func main() {
 		})),
 	}
 
-	// Set up a connection to the server.
-	// Устанавливаем безопасное соединение с сервером, передавая параметры аутентификации
-	conn, err := grpc.Dial(address, opts...)
-	if err != nil {
-		log.Fatalf("Did not connect: %v", err)
-	}
-	defer conn.Close()
-
-	// Передаем соединение и создаем заглушку.
-	// Ее экземпляр содержит все удаленные методы, которые можно вызвать на сервере.
-	c := pb.NewProductInfoClient(conn)
-
-	// Contact the server and print out its response.
-	name := "Sumsung S9999"
-	description := "Samsung Galaxy S9999 is the latest smart phone, launched in February 2039"
-	price := float32(7777.0)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.AddProduct(ctx, &pb.Product{Name: name, Description: description, Price: price}, grpc.UseCompressor(gzip.Name))
-	if err != nil {
-		log.Fatalf("Could not add product: %v", err)
-	}
-	log.Printf("Product ID: %s added successfully", r.Value)
 
-	product, err := c.GetProduct(ctx, &pb.ProductID{Value: r.Value})
+	// Register gRPC server endpoint, gRPC server should be running and accessible
+	// Сервер gRPC должен быть запущен и доступен
+	mux := runtime.NewServeMux()
+	//opts := []grpc.DialOption{grpc.WithInsecure()}
+	err = gw.RegisterProductInfoHandlerFromEndpoint(ctx, mux, grpcServerEndpoint, opts)
 	if err != nil {
-		log.Fatalf("Could not get product: %v", err)
+		log.Fatalf("Fail to register gRPC service endpoint: %v", err)
+		return
 	}
-	log.Println("Product: ", product.String())
+	if err := http.ListenAndServe(":8080", mux); err != nil {
+		log.Fatalf("Could not setup HTTP endpoint: %v", err)
+	}
 }
 
+// The value of OAuth2 token. String of token is in the code
+// Значение токена OAuth2. Используется строка прописанная в коде
 func fetchToken() *oauth2.Token {
 	return &oauth2.Token{
 		AccessToken: "blablatok-tokblabla-blablatok",

@@ -5,6 +5,7 @@ import (
 
 	pb "github.com/blablatov/mtls-grpc-gateway/gw-mtls-proto"
 	"github.com/gofrs/uuid"
+	wrapper "github.com/golang/protobuf/ptypes/wrappers"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -15,7 +16,7 @@ type server struct {
 }
 
 // AddProduct реализует ecommerce. AddProduct, добавить товар
-func (s *server) AddProduct(ctx context.Context, in *pb.Product) (*pb.ProductID, error) {
+func (s *server) AddProduct(ctx context.Context, in *pb.Product) (*wrapper.StringValue, error) {
 	out, err := uuid.NewV4()
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, " %v\nError while generating Product ID", err)
@@ -25,11 +26,11 @@ func (s *server) AddProduct(ctx context.Context, in *pb.Product) (*pb.ProductID,
 		s.productMap = make(map[string]*pb.Product)
 	}
 	s.productMap[in.Id] = in
-	return &pb.ProductID{Value: in.Id}, status.New(codes.OK, "").Err()
+	return &wrapper.StringValue{Value: in.Id}, status.New(codes.OK, "").Err()
 }
 
 // GetProduct реализует ecommerce. GetProduct получить товар
-func (s *server) GetProduct(ctx context.Context, in *pb.ProductID) (*pb.Product, error) {
+func (s *server) GetProduct(ctx context.Context, in *wrapper.StringValue) (*pb.Product, error) {
 	value, exists := s.productMap[in.Value]
 	if exists {
 		return value, status.New(codes.OK, "").Err()
