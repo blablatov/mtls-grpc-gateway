@@ -1,41 +1,33 @@
-## ``ProductInfo`` Service and Client - Go Implementation
+## Service and Client of gRPC via mTLS. gRPC-gateway
 
-## Building and Running Service
+### Building and Running Service
 
-In order to build, Go to ``Go`` module root directory location (grpc-gateway/go/server) and execute the following
+In order to build, Go to ``Go`` module root directory location (mtls-grpc-gateway/gw-mtls-service) and execute the following
  shell command,
 ```
-go build -i -v -o bin/server
+go build -v 
+```  
+```
+./gw-mtls-service
 ```
 
-In order to run, Go to ``Go`` module root directory location (grpc-gateway/go/server) and execute the following
-shell command,
+### Building and Running Client   
 
-```
-./bin/server
-```
-
-## Building and Running Client   
-
-In order to build, Go to ``Go`` module root directory location (grpc-gateway/go/client) and execute the following
+In order to build, Go to ``Go`` module root directory location (mtls-grpc-gateway/gw-mtls-client) and execute the following
  shell command,
 ```
-go build -i -v -o bin/client
+go build -v
+```  
+```
+./gw-mtls-client
 ```
 
-In order to run, Go to ``Go`` module root directory location (grpc-gateway/go/client) and execute the following
-shell command,
-
-```
-./bin/client
-```
-
-## Testing
+### Testing
 
 * Add a new product to the ProductInfo service.
 
 ```
-$ curl -X POST http://localhost:8081/v1/product -d '{"name": "Apple", "description": "iphone7", "price": 699}'
+$ curl -X POST http://localhost:8080/v1/product -d '{"name": "Apple", "description": "iphone7", "price": 699}'
 
 "38e13578-d91e-11e9-819f-6c96cfe0687d"
 ```
@@ -43,7 +35,7 @@ $ curl -X POST http://localhost:8081/v1/product -d '{"name": "Apple", "descripti
 * Get the existing product using ProductID
 
 ```
-$ curl http://localhost:8081/v1/product/38e13578-d91e-11e9-819f-6c96cfe0687d
+$ curl http://localhost:8080/v1/product/38e13578-d91e-11e9-819f-6c96cfe0687d
 
 {"id":"38e13578-d91e-11e9-819f-6c96cfe0687d","name":"Apple","description":"iphone7","price":
 ```
@@ -60,7 +52,7 @@ product_info.proto
 
 ### Update after changing the service definition
 ``` 
-go get -u github.com/grpc-up-and-running/samples/ch08/grpc-gateway/go/pb
+go get -u github.com/blablatov/mtls-grpc-gateway/gw-mtls-proto
 ```
 
 ### Generate reverse proxy service code
@@ -74,7 +66,7 @@ product_info.proto
 
 ### Update after changing the reverse proxy service definition
 ``` 
-go get -u github.com/grpc-up-and-running/samples/ch08/grpc-gateway/go/gw
+go get -u github.com/blablatov/mtls-grpc-gateway/gw-mtls-gate
 ```
 
 ### Generate the swagger file correspond to reverse proxy service

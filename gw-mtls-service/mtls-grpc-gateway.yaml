@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment 
 metadata:
-  name: mtls-service
+  name: gw-mtls-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mtls-service
+      app: gw-mtls-service
   template:
     metadata:
       labels:
-        app: mtls-service
+        app: gw-mtls-service
     spec:
       containers:
-      - name: mtls-service
-        image: ./mtls-service
+      - name: gw-mtls-service
+        image: ./gw-mtls-service
         resources:
           limits:
             memory: "128Mi"
@@ -29,7 +29,7 @@ metadata:
   name: net-mtls-service
 spec:
   selector:
-    app: mtls-service
+    app: gw-mtls-service
   ports:
   - port: 50051
     targetPort: 50051

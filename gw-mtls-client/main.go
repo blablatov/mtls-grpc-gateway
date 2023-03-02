@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -85,9 +86,17 @@ func main() {
 		log.Fatalf("Fail to register gRPC service endpoint: %v", err)
 		return
 	}
+
+	http.HandleFunc("/", handler) // Каждый запрос вызывает обработчик
+	//log.Fatal(http.ListenAndServe("localhost:8080", mux))
 	if err := http.ListenAndServe(":8080", mux); err != nil {
 		log.Fatalf("Could not setup HTTP endpoint: %v", err)
 	}
+}
+
+// Обработчик возвращает компонент пути из URL запроса
+func handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "URL.Path = %q\n", r.URL.Path)
 }
 
 // The value of OAuth2 token. String of token is in the code

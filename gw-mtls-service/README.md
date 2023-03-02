@@ -3,11 +3,11 @@
 Создание Docker контейнера для gRPC-сервера (build container of server):      
 
 ```shell script
-docker build -t mtls-service .
+docker build -t gw-mtls-service .
 ```
 
 Развернуть задание с серверным gRPC-приложением:         
 
 ```shell script
-kubectl apply -f grpc-mtls-service.yaml
+kubectl apply -f gw-grpc-mtls-service.yaml
 ```
