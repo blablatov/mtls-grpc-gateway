@@ -18,6 +18,10 @@ import (
 	"google.golang.org/grpc/credentials/oauth"
 )
 
+const (
+	address = "localhost:50051"
+)
+
 // Conventional test that starts a gRPC client test the service with RPC.
 // Традиционный тест, который запускает клиент для проверки удаленного метода сервиса.
 func TestServer_AddProduct(t *testing.T) {
