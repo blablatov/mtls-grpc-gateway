@@ -24,20 +24,43 @@ go build -v
 
 ### Testing
 
-* Add a new product to the ProductInfo service.
-
+* Add a new product to the ProductInfo service:  
 ```
-$ curl -X POST http://localhost:8080/v1/product -d '{"name": "Apple", "description": "iphone7", "price": 699}'
-
+$ curl -X POST https://localhost:8080/v1/product -d '{"name": "Apple", "description": "iphone7", "price": 699}'
+```
+* Response:   
+```
 "38e13578-d91e-11e9-819f-6c96cfe0687d"
 ```
 
-* Get the existing product using ProductID
+* Or via SoapUI and etc.:  
+```
+Mon Mar 06 21:24:58 YEKT 2023: DEBUG: http-outgoing >> 
+POST /v1/product HTTP/1.1
+Accept-Encoding: gzip,deflate
+Content-Type: application/json
+Content-Length: 57
+Host: localhost:8443
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.5 (Java/16.0.1)
 
+{"name": "Apple", "description": "iphone7", "price": 699}
+
+Mon Mar 06 21:24:58 YEKT 2023: DEBUG: http-incoming << 
+HTTP/1.1 200 OK
+Content-Type: application/json
+Grpc-Metadata-Content-Type: application/grpc
+Date: Mon, 06 Mar 2023 16:24:58 GMT
+Content-Length: 38
+
+"ce01618f-ec7b-4c7f-85ea-0e7841363e59"
+```
+
+* Get the existing product using ProductID:  
 ```
 $ curl http://localhost:8080/v1/product/38e13578-d91e-11e9-819f-6c96cfe0687d
 
-{"id":"38e13578-d91e-11e9-819f-6c96cfe0687d","name":"Apple","description":"iphone7","price":
+{"id":"38e13578-d91e-11e9-819f-6c96cfe0687d","name":"Apple","description":"iphone7","price":699}
 ```
 
 ## Additional Information

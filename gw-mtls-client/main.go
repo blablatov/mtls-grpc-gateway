@@ -75,15 +75,14 @@ func main() {
 	}
 
 	// 2*time.Second - always not ok. Всегда ошибка по таймауту. TODO feedback.
-	// 10*time.Second - sometimes not ok. Иногда.
-	// 100*time.Second - rarely not ok. Редко.
-	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
+	// 10*time.Second - sometimes not ok. Иногда ok.
+	// 1000*time.Second - always ok. Всегда ok.
+	ctx, cancel := context.WithTimeout(context.Background(), 1000*time.Second)
 	defer cancel()
 
 	// Register gRPC server endpoint, gRPC server should be running and accessible
 	// Сервер gRPC должен быть запущен и доступен
 	mux := runtime.NewServeMux()
-	//opts := []grpc.DialOption{grpc.WithInsecure()}
 	err = gw.RegisterProductInfoHandlerFromEndpoint(ctx, mux, grpcServerEndpoint, opts)
 	if err != nil {
 		log.Fatalf("Fail to register gRPC service endpoint: %v", err)
@@ -91,10 +90,12 @@ func main() {
 	}
 
 	http.HandleFunc("/", handler) // Каждый запрос вызывает обработчик
-	//log.Fatal(http.ListenAndServe("localhost:8080", mux))
-	if err := http.ListenAndServe(":8080", mux); err != nil {
-		log.Fatalf("Could not setup HTTP endpoint: %v", err)
+	if err := http.ListenAndServeTLS(":8443", crtFile, keyFile, mux); err != nil {
+		log.Fatalf("Could not setup HTTPS endpoint: %v", err)
 	}
+	/*if err := http.ListenAndServe(":8080", mux); err != nil {
+		log.Fatalf("Could not setup HTTP endpoint: %v", err)
+	}*/
 }
 
 // Обработчик возвращает компонент пути из URL запроса
