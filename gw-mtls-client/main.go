@@ -74,7 +74,10 @@ func main() {
 		})),
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	// 2*time.Second - always not ok. Всегда ошибка по таймауту. TODO feedback.
+	// 10*time.Second - sometimes not ok. Иногда.
+	// 100*time.Second - rarely not ok. Редко.
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 	defer cancel()
 
 	// Register gRPC server endpoint, gRPC server should be running and accessible
