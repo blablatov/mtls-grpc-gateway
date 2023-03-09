@@ -26,7 +26,7 @@ go build -v
 
 * Add a new product to the ProductInfo service:  
 ```
-$ curl -X POST https://localhost:8080/v1/product -d '{"name": "Apple", "description": "iphone7", "price": 699}'
+$ curl -X POST https://localhost:8443/v1/product -d '{"name": "Apple", "description": "iphone7", "price": 699}'
 ```
 * Response:   
 ```
@@ -58,10 +58,21 @@ Content-Length: 38
 
 * Get the existing product using ProductID:  
 ```
-$ curl http://localhost:8080/v1/product/38e13578-d91e-11e9-819f-6c96cfe0687d
-
-{"id":"38e13578-d91e-11e9-819f-6c96cfe0687d","name":"Apple","description":"iphone7","price":699}
+$ curl http://localhost:8443/v1/product/38e13578-d91e-11e9-819f-6c96cfe0687d
+```  
+* Response: 
 ```
+{"id":"38e13578-d91e-11e9-819f-6c96cfe0687d","name":"Apple","description":"iphone7","price":699}
+```  
+
+* Or via request string of web-browser:   
+```
+https://localhost:8443/v1/product/38e13578-d91e-11e9-819f-6c96cfe0687d  
+```  
+* Response: 
+```
+{"id":"38e13578-d91e-11e9-819f-6c96cfe0687d","name":"Apple","description":"iphone7","price":699}
+```   
 
 ## Additional Information
 

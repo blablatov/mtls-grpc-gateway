@@ -4,12 +4,10 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"path/filepath"
-	"time"
 
 	gw "github.com/blablatov/mtls-grpc-gateway/gw-mtls-gate"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -74,10 +72,8 @@ func main() {
 		})),
 	}
 
-	// 2*time.Second - always not ok. Всегда ошибка по таймауту. TODO feedback.
-	// 10*time.Second - sometimes not ok. Иногда ok.
-	// 1000*time.Second - always ok. Всегда ok.
-	ctx, cancel := context.WithTimeout(context.Background(), 1000*time.Second)
+	//ctx, cancel := context.WithTimeout(context.Background(), 1000*time.Second) //err context deadline
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// Register gRPC server endpoint, gRPC server should be running and accessible
@@ -89,18 +85,12 @@ func main() {
 		return
 	}
 
-	http.HandleFunc("/", handler) // Каждый запрос вызывает обработчик
 	if err := http.ListenAndServeTLS(":8443", crtFile, keyFile, mux); err != nil {
 		log.Fatalf("Could not setup HTTPS endpoint: %v", err)
 	}
 	/*if err := http.ListenAndServe(":8080", mux); err != nil {
 		log.Fatalf("Could not setup HTTP endpoint: %v", err)
 	}*/
-}
-
-// Обработчик возвращает компонент пути из URL запроса
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "URL.Path = %q\n", r.URL.Path)
 }
 
 // The value of OAuth2 token. String of token is in the code
