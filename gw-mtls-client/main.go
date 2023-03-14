@@ -58,12 +58,16 @@ func main() {
 		log.Fatalf("failed to append ca certs")
 	}
 
+	// Connect to server. Data of auth. Соединения с сервером
 	// Указываем аутентификационные данные для транспортного протокола с помощью DialOption.
 	opts := []grpc.DialOption{
 		// Указываем один и тот же токен OAuth в параметрах всех вызовов в рамках одного соединения.
 		// Если нужно указывать токен для каждого вызова отдельно, используем CallOption.
 		grpc.WithPerRPCCredentials(tokau),
-		// Указываем транспортные аутентификационные данные в виде параметров соединения
+		// Регистрация унарного перехватчика на gRPC-клиенте
+		// Будет направлять все запросы к функции orderUnaryClientInterceptor
+		grpc.WithUnaryInterceptor(orderUnaryClientInterceptor),
+		// Указываем транспортные аутентификационные данные в виде параметров соединения
 		// Поле ServerName должно быть равно значению Common Name, указанному в сертификате
 		grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{
 			ServerName:   hostname, // NOTE: this is required!
@@ -85,6 +89,7 @@ func main() {
 		return
 	}
 
+	// TLS connect. Подключение по протоколу TLS
 	if err := http.ListenAndServeTLS(":8443", crtFile, keyFile, mux); err != nil {
 		log.Fatalf("Could not setup HTTPS endpoint: %v", err)
 	}
@@ -99,4 +104,19 @@ func fetchToken() *oauth2.Token {
 	return &oauth2.Token{
 		AccessToken: "blablatok-tokblabla-blablatok",
 	}
+}
+
+func orderUnaryClientInterceptor(ctx context.Context, method string, req, reply interface{},
+	cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+	// Pre-processor phase. Этап предобработки, есть доступ к RPC-запросу перед его отправкой на сервер
+	log.Println("Method : " + method)
+	// Invoking the remote method. Вызов удаленного RPC-метода с помощью UnaryInvoker.
+	err := invoker(ctx, method, req, reply, cc, opts...)
+	// Post-processor phase. Этап постобработки, можно обработать ответ или возникшую ошибку.
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	log.Println(reply)
+	return err
 }

@@ -28,6 +28,8 @@ docker build -t gw-mtls-client .
 
 ```shell script
 kubectl apply -f gw-grpc-mtls-client.yaml
-```
+```  
+
+### Клиентский унарный перехватчик в gRPC
 
 
