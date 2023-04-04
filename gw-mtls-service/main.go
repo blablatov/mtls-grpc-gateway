@@ -81,7 +81,7 @@ func main() {
 	s := grpc.NewServer(opts...)
 
 	// Registers created service to gRPC-server via generated AP
-	// Регистрируем реализованный сервис на только что созданном gRPCсервере с помощью сгенерированных AP
+	// Регистрируем реализованный сервис на созданном gRPCсервере с помощью сгенерированных AP
 	pb.RegisterProductInfoServer(s, &server{})
 
 	lis, err := net.Listen("tcp", port) // Listen of port. Начинаем прослушивать порт 50051.
@@ -127,7 +127,8 @@ func ensureValidToken(ctx context.Context, req interface{},
 
 // Server : Unary Interceptor
 // Серверный унарный перехватчик в gRPC
-func orderUnaryServerInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func orderUnaryServerInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo,
+	handler grpc.UnaryHandler) (interface{}, error) {
 	// Pre-processing logic
 	// Gets info about the current RPC call by examining the args passed in
 	// Логика перед вызовом. Получает информацию о текущем RPC-вызове путем анализа переданных аргументов
