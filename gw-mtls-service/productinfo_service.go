@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+
+	//rg "getredis"
 	"log"
+	rs "setredis"
 	"sync"
 
-	rs "grpc-redis"
-
+	//rs "github.com/blablatov/grpc-dsn-dbms/grpc-redis"
 	pb "github.com/blablatov/mtls-grpc-gateway/gw-mtls-proto"
 	"github.com/gofrs/uuid"
 	wrapper "github.com/golang/protobuf/ptypes/wrappers"
@@ -52,26 +54,26 @@ func (s *server) AddProduct(ctx context.Context, in *pb.Product) (*wrapper.Strin
 	}
 	s.productMap[in.Id] = in
 
-	/*dtr := rs.RedisData{
-		Name:        in.Name,
-		Description: in.Description,
-	}*/
-
-	chs := make(chan string, 3)
-	chb := make(chan string, 1)
+	//chs := make(chan string, 4)
+	chs := make(chan string, 1)
+	chb := make(chan bool, 1)
 
 	var wg sync.WaitGroup
 	wg.Add(1) // Counter of goroutines. Значение счетчика.
 
-	go rs.RedisDsn(in.Name, in.Description, wg, chs, chb)
-
+	rs.SetRedis(in.Id, in.Name, wg, chs)
+	go func() {
+		wg.Wait()
+		close(chb)
+	}()
+	/*go rs.RedisDsn(in.Id, in.Name, wg, chs, chb)
 	go func() {
 		wg.Wait()
 		close(chs)
 		close(chb)
-	}()
+	}()*/
 
-	return &wrapper.StringValue{Value: in.Id}, status.New(codes.OK, <-chb).Err()
+	return &wrapper.StringValue{Value: in.Id}, status.New(codes.OK, "").Err()
 }
 
 // Method get of product. Метод сервера GetProduct получить товар
