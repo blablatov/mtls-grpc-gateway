@@ -1,4 +1,4 @@
-## Service and Client of gRPC via mTLS. gRPC-gateway
+## Service and Client of gRPC via mTLS. gRPC-gateway. Rest. Redis  
 
 ### Building and Running Service
 
