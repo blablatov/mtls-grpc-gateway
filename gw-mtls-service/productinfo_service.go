@@ -3,10 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-
-	//rg "getredis"
 	"log"
-	rs "setredis"
 	"sync"
 
 	rs "github.com/blablatov/grpc-dsn-dbms/grpc-redis"
