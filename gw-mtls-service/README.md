@@ -10,4 +10,9 @@ docker build -t gw-mtls-service .
 
 ```shell script
 kubectl apply -f gw-grpc-mtls-service.yaml
-```
+```  
+
+## DSN for DBMS  
+Code of data exchange with Redis. Обмен данными с Redis. 
+
+
