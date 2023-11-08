@@ -1,8 +1,10 @@
-## Service and Client of gRPC via mTLS. gRPC-gateway. Rest. Redis  
+[![Go](https://github.com/blablatov/mtls-grpc-gateway/actions/workflows/mtls-grpc-gateway.yml/badge.svg)](https://github.com/blablatov/mtls-grpc-gateway/actions/workflows/mtls-grpc-gateway.yml)
+### Service and Client of gRPC via mTLS. gRPC-gateway. Rest. Redis  
+`gRPC` шлюз с обратным прокси-сервером поддержкой `HTTPs`. Для доступа к `gRPC`серверу для `HTTPs` клиентов.  
+Логика сервиса пишет данные в `Redis`.  
+### Building and Running gRPC-gateway Service
 
-### Building and Running Service
-
-In order to build, Go to ``Go`` module root directory location (mtls-grpc-gateway/gw-mtls-service) and execute the following
+In order to build, Go to ``Go`` module root directory location `mtls-grpc-gateway/gw-mtls-service` and execute the following
  shell command,
 ```
 go build -v 
@@ -11,9 +13,9 @@ go build -v
 ./gw-mtls-service
 ```
 
-### Building and Running Client   
+### Building and Running gRPC-proxy-gateway-https Client   
 
-In order to build, Go to ``Go`` module root directory location (mtls-grpc-gateway/gw-mtls-client) and execute the following
+In order to build, Go to ``Go`` module root directory location `mtls-grpc-gateway/gw-mtls-client` and execute the following
  shell command,
 ```
 go build -v
@@ -33,7 +35,7 @@ $ curl -X POST https://localhost:8443/v1/product -d '{"name": "Apple", "descript
 "38e13578-d91e-11e9-819f-6c96cfe0687d"
 ```
 
-* Or via SoapUI and etc.:  
+* Or via `SoapUI` and etc.:  
 ```
 Mon Mar 06 21:24:58 YEKT 2023: DEBUG: http-outgoing >> 
 POST /v1/product HTTP/1.1
@@ -56,7 +58,7 @@ Content-Length: 38
 "ce01618f-ec7b-4c7f-85ea-0e7841363e59"
 ```
 
-* Get the existing product using ProductID:  
+* Get the existing product using `ProductID`:  
 ```
 $ curl http://localhost:8443/v1/product/38e13578-d91e-11e9-819f-6c96cfe0687d
 ```  
@@ -74,9 +76,7 @@ https://localhost:8443/v1/product/38e13578-d91e-11e9-819f-6c96cfe0687d
 {"id":"38e13578-d91e-11e9-819f-6c96cfe0687d","name":"Apple","description":"iphone7","price":699}
 ```   
 
-## Additional Information
-
-### Generate Server and Client side code 
+### Generates Server and Client side code via proto-file 
 ``` 
 protoc -I/usr/local/include -I. \
 -I$GOPATH/src \
@@ -89,7 +89,7 @@ product_info.proto
 go get -u github.com/blablatov/mtls-grpc-gateway/gw-mtls-proto
 ```
 
-### Generate reverse proxy service code
+### Generate reverse proxy service code via proto-file
 ```
 protoc -I/usr/local/include -I. \
 -I$GOPATH/src \
